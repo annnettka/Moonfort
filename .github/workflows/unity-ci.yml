@@ -23,11 +23,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-library-
 
+      - name: Setup Unity
+        uses: game-ci/unity-builder@v2
+        with:
+          unityVersion: 6000.0.32f1
+
       - name: Build project
         uses: game-ci/unity-builder@v2
         with:
           unityVersion: 6000.0.32f1
-          targetPlatform: StandaloneWindows64   
+          targetPlatform: StandaloneWindows64
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: build/
