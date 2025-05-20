@@ -3,7 +3,7 @@ name: Unity CI
 on:
   push:
     branches:
-      - main   
+      - main
   pull_request:
     branches:
       - main
@@ -35,7 +35,7 @@ jobs:
           targetPlatform: StandaloneWindows64
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3.1.3
+        uses: actions/upload-artifact@main
         with:
           name: build
           path: build/
