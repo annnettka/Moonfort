@@ -1,0 +1,41 @@
+name: Unity CI
+
+on:
+  push:
+    branches:
+      - main   
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Cache Library
+        uses: actions/cache@v3
+        with:
+          path: Library
+          key: ${{ runner.os }}-library-${{ hashFiles('**/Packages/manifest.json') }}
+          restore-keys: |
+            ${{ runner.os }}-library-
+
+      - name: Setup Unity
+        uses: game-ci/unity-builder@v2
+        with:
+          unityVersion: 2021.3.16f1  
+
+      - name: Build project
+        uses: game-ci/unity-builder@v2
+        with:
+          unityVersion: 6000.0.32f1
+          targetPlatform: StandaloneWindows64   
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: build/
