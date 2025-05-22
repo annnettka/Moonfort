@@ -20,7 +20,11 @@ public class PlayerController : MonoBehaviour
 
         if (_input == null)
         {
-            Debug.LogError("IPlayersInput реалізація не знайдена на гравцеві!");
+            Object.FindFirstObjectByType<PlayerInputKeyboard>();
+        }
+        if (_input == null)
+        {
+            Debug.LogError("IPlayersInput реалізація не знайдена на гравці!");
         }
     }
 
