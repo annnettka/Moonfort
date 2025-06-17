@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerController))]
-public class PlayerInputSystem : MonoBehaviour, IPlayersInput
+public class PlayerInputSystem : MonoBehaviour, IPlayerInput
 {
     public Vector2 MoveInput => new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 

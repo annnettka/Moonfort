@@ -1,22 +1,8 @@
 using UnityEngine;
 
-public class PlayerInputKeyboard : MonoBehaviour, IPlayersInput
+[RequireComponent(typeof(PlayerController))]
+public class PlayerInputKeyboard : MonoBehaviour, IPlayerInput
 {
-    public Vector2 MoveInput
-    {
-        get
-        {
-            float x = 0f;
-            float y = 0f;
-
-            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) x = -1f;
-            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) x = 1f;
-            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) y = 1f;
-            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) y = -1f;
-
-            return new Vector2(x, y).normalized;
-        }
-    }
-
+    public Vector2 MoveInput => new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
     public bool AttackPressed => Input.GetKeyDown(KeyCode.Space);
 }

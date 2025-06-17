@@ -2,77 +2,65 @@ using UnityEngine;
 using UnityEngine.Playables;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(PlayerInputSystem))]
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float attackCooldown = 1f;
 
     private Rigidbody _rb;
-    private IPlayersInput _input;
     private PlayerState _currentState = PlayerState.Idle;
     private float _lastAttackTime = -Mathf.Infinity;
+    private IPlayerInput _input;
 
-    private void Awake()
+    void Awake()
     {
         _rb = GetComponent<Rigidbody>();
-        _input = GetComponent<IPlayersInput>();
+        _input = GetComponent<IPlayerInput>();
 
         if (_input == null)
         {
-            Object.FindFirstObjectByType<PlayerInputKeyboard>();
+            _input = FindFirstObjectByType<PlayerInputKeyboard>();
         }
+
         if (_input == null)
         {
-            Debug.LogError("IPlayersInput реалізація не знайдена на гравці!");
+            Debug.LogError("IPlayerInput реалізація не знайдена!");
         }
     }
 
     private void Update()
     {
-        HandleInput();
+        if (_input == null) return;
+
+        HandleMovement();
+        HandleAttack();
     }
 
-    private void HandleInput()
+    private void HandleMovement()
     {
-        if (_input == null)
-            return;
-
         Vector2 move = _input.MoveInput;
-
-        if (move != Vector2.zero)
+        if (move == Vector2.zero)
         {
-            Move(move);
-        }
-        else if (_currentState != PlayerState.Attacking)
-        {
-            _currentState = PlayerState.Idle;
             _rb.linearVelocity = new Vector3(0, _rb.linearVelocity.y, 0);
+            _currentState = PlayerState.Idle;
+            return;
         }
 
-        if (_input.AttackPressed && Time.time - _lastAttackTime >= attackCooldown)
-        {
-            Attack();
-        }
-    }
-
-    private void Move(Vector2 input)
-    {
-        Vector3 direction = new Vector3(input.x, 0, input.y).normalized;
+        Vector3 direction = new Vector3(move.x, 0, move.y).normalized;
         Vector3 velocity = direction * moveSpeed;
         _rb.linearVelocity = new Vector3(velocity.x, _rb.linearVelocity.y, velocity.z);
-
         _currentState = PlayerState.Moving;
     }
 
-    private void Attack()
+    private void HandleAttack()
     {
-        _currentState = PlayerState.Attacking;
-        _lastAttackTime = Time.time;
-
-        Debug.Log("Player Attacked");
-
-        Invoke(nameof(ResetToIdle), 0.5f);
+        if (_input.AttackPressed && Time.time - _lastAttackTime >= attackCooldown)
+        {
+            _currentState = PlayerState.Attacking;
+            _lastAttackTime = Time.time;
+            Debug.Log("Player Attacked");
+            Invoke(nameof(ResetToIdle), 0.5f);
+        }
     }
 
     private void ResetToIdle()
@@ -80,4 +68,11 @@ public class PlayerController : MonoBehaviour
         if (_currentState == PlayerState.Attacking)
             _currentState = PlayerState.Idle;
     }
+    public enum PlayerState
+    {
+        Idle,
+        Moving,
+        Attacking
+    }
+
 }

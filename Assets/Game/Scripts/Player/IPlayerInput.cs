@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+using UnityEngine;
 
-public interface IPlayersInput
+public interface IPlayerInput
 {
     Vector2 MoveInput { get; }
     bool AttackPressed { get; }
